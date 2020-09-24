@@ -5,8 +5,8 @@ const app = express();
 mongoose.set('useCreateIndex', true);
 
 mongoose.connect('mongodb+srv://radardev:radardev@cluster0.cyuz9.mongodb.net/maratoners?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+	useNewUrlParser: true,
+	useUnifiedTopology: true
 });
 
 app.use(express.json());
