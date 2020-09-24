@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
 const app = express();
+mongoose.set('useCreateIndex', true);
 
 mongoose.connect('mongodb+srv://radardev:radardev@cluster0.cyuz9.mongodb.net/maratoners?retryWrites=true&w=majority', {
     useNewUrlParser: true,
