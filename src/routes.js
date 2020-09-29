@@ -11,7 +11,7 @@ routes.put('/maratoners', maratonerStore.updateMaratoner);
 
 routes.put('/changepass', maratonerStore.changePassword);
 
-// routes.put('/forgotpass', maratonerStore.forgotPassword);
+routes.put('/forgotpass', maratonerStore.forgotPassword);
 
 routes.delete('/maratoners', maratonerStore.deleteMaratoner);
 
