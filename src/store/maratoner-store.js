@@ -1,10 +1,23 @@
-const Maratoner = require('../schema/maratoner-schema');
-const { duplicateRegister, ok, registerNotFound } = require('../utils/enums');
+const generatePass = require('../utils/generatePass');
+const sendMail = require('../utils/sendMail');
 const parseStringAsArray = require('../utils/parseStringAsArray');
+const { duplicateRegister, ok, registerNotFound } = require('../utils/enums');
+const Maratoner = require('../schema/maratoner-schema');
 
 module.exports = {
+	// add new maratoner
 	async addMaratoner(request, response) {
-		const { email, password, name, photo, bio, series, longitude, latitude, instaUser } = request.body;
+		const { email, name, photo, bio, series, longitude, latitude, instaUser } = request.body;
+
+		let password = await generatePass();
+
+		let mailConfigs = {
+			receiver: email,
+			subject: `Ola ${name}, seja bem vindo ao maratoners`,
+			textMessage: `Ola ${name}, seja bem vindo ao maratoners.\nÉ um imenso prazer ter-lo conosco, esperamos que curta sua estadia. E que faça ótimos amigos.\nCaso tenha algum problema é só entrar em contato conosco, estamos sempre a disposição.\nA sua senha é "${password}", você deve alterar-lá ao efetuar login.`
+		};
+
+		await sendMail(mailConfigs);
 
 		let maratoner = await Maratoner.findOne({ email });
 
@@ -75,18 +88,35 @@ module.exports = {
 		return response.json(registerNotFound);
 	},
 
-	// // forgot password
-	// async forgotPassword( request, response ) {
-	// 	const { email, oldPass, newPass } = request.body;
+	// forgot password
+	async forgotPassword( request, response ) {
+		const { email } = request.body;
 
-	// 	let maratoner = await Maratoner.findOne({ email });
+		let maratoner = await Maratoner.findOne({ email });
 
-	// 	if (!maratoner) {
-	// 		return response.json(registerNotFound);
-	// 	}
+		if (!maratoner) {
+			return response.json(registerNotFound);
+		}
 
-	// 	return response.json(ok);
-	// },
+		let newPass = await generatePass();
+
+		await Maratoner.updateOne(
+			{ email: email },
+			{
+				password: newPass
+			}
+		);
+
+		let mailConfigs = {
+			receiver: email,
+			subject: `Ola ${maratoner.name}, recuperação de senha`,
+			textMessage: `Foi solicitado uma recuperação de senha com o seu email.\nComo solicitado a sua nova senha é: "${newPass}"\nRecomendamos que efetue a troca da senha após efetuar o login.`
+		};
+
+		await sendMail(mailConfigs);
+
+		return response.json(ok);
+	},
 
 	// Search All Maratoners
 	async getMaratoners(request, response) {

@@ -1,5 +1,5 @@
 {
-    "editor.tabSize": 1,
+    "editor.tabSize": 2,
     "vetur.format.options.useTabs": true,
     "workbench.tree.renderIndentGuides": "always",
     "editor.insertSpaces": false
