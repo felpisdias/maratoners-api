@@ -15,4 +15,9 @@ module.exports = ({
 		title: 'OK'
 	},
 
+	InvalidData: {
+		code: 400,
+		title: 'Dados Invalidos'
+	},
+
 });

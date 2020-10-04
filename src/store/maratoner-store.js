@@ -1,7 +1,7 @@
 const generatePass = require('../utils/generatePass');
 const sendMail = require('../utils/sendMail');
 const parseStringAsArray = require('../utils/parseStringAsArray');
-const { duplicateRegister, ok, registerNotFound } = require('../utils/enums');
+const { duplicateRegister, ok, registerNotFound, InvalidData } = require('../utils/enums');
 const Maratoner = require('../schema/maratoner-schema');
 
 module.exports = {
@@ -161,11 +161,25 @@ module.exports = {
 	},
 
 	// delete maratoners
-	async deleteMaratoner( request, response ) {
+	async deleteMaratoner(request, response) {
 		const { mail } = request.query;
 		const maratoner = await Maratoner.findOneAndRemove({
 			email: mail
 		});
+		return response.json(maratoner);
+	},
+
+	async login(request, response) {
+		const { email, password } = request.body;
+
+		let maratoner = await Maratoner.findOne({ email });
+
+		if(!maratoner) {
+			return response.json(registerNotFound);
+		}
+		else if(maratoner.password!==password) {
+			return response.json(InvalidData);
+		}
 		return response.json(maratoner);
 	},
 
