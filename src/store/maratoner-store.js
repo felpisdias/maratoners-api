@@ -183,4 +183,20 @@ module.exports = {
 		return response.json(maratoner);
 	},
 
+	// change Avatar
+	async changeAvatar( request, response ) {
+		const { email, newAvatar } = request.body;
+
+		await Maratoner.findOne({ email });
+
+		await Maratoner.updateOne(
+			{ email: email },
+			{
+				photo: newAvatar
+			}
+		);
+		return response.json(ok);
+	},
+
+
 };
