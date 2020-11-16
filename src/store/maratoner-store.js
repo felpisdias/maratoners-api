@@ -1,7 +1,7 @@
 const generatePass = require('../utils/generatePass');
 const sendMail = require('../utils/sendMail');
 const parseStringAsArray = require('../utils/parseStringAsArray');
-const { duplicateRegister, ok, registerNotFound, InvalidData } = require('../utils/enums');
+const { duplicateRegister, ok, registerNotFound, InvalidData, InternalServerError } = require('../utils/enums');
 const Maratoner = require('../schema/maratoner-schema');
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
 				instaUser,
 			});
 
-			return response.json(maratoner);
+			return response.json(ok);
 		}
 
 		return response.json(duplicateRegister);
@@ -55,18 +55,22 @@ module.exports = {
 			coordinates: [longitude, latitude],
 		};
 
-		const maratoner = await Maratoner.updateOne(
+
+		let maratoner = await Maratoner.updateOne(
 			{ email: email },
 			{
-				name: name,
-				photo: photo,
-				bio: bio,
+				name,
+				photo,
+				bio,
 				series: seriesArray,
 				location,
 				instaUser,
 			}
 		);
-		return response.json(maratoner);
+		if(maratoner.nModified > 0) {
+			return response.json(ok);
+		}
+		return response.json(InternalServerError);
 	},
 
 	// change password
@@ -77,7 +81,7 @@ module.exports = {
 
 		if ( maratoner.password === oldPass ) {
 
-			maratoner = await Maratoner.updateOne(
+			await Maratoner.updateOne(
 				{ email: email },
 				{
 					password: newPass
@@ -180,6 +184,11 @@ module.exports = {
 		else if(maratoner.password!==password) {
 			return response.json(InvalidData);
 		}
+		maratoner.password = undefined;
+		maratoner.email = undefined;
+		maratoner = JSON.parse(JSON.stringify(maratoner ));
+		// maratoner.password = undefined;
+		console.log(maratoner.password);
 		return response.json(maratoner);
 	},
 

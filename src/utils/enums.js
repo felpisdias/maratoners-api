@@ -16,8 +16,13 @@ module.exports = ({
 	},
 
 	InvalidData: {
-		code: 400,
+		code: 504,
 		title: 'Dados Invalidos'
+	},
+
+	InternalServerError: {
+		code: 500,
+		title: 'Ocorreu um erro ao executar esta solicitação, tente novamente mais tarde'
 	},
 
 });
