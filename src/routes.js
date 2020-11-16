@@ -22,7 +22,7 @@ routes.get('/maratonerbyserie', maratonerStore.getMaratonerBySerie);
 routes.get('/login', maratonerStore.login);
 
 routes.get('/', (request, response) => {
-	return response.send('Hello doidos');
+	return response.send('Hello Mundo');
 });
 
 module.exports = routes;
